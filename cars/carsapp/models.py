@@ -7,8 +7,7 @@ from django.contrib.auth.models import User
 class Car(models.Model):
     make = models.CharField(max_length=20, blank=False, null=False)
     model = models.CharField(max_length=20, blank=False, null=False)
-    # year = models.DateField()
-    year = models.CharField(max_length=4, blank=False, null=False)
+    year = models.CharField(max_length=4, blank=True, null=True)
     description = models.CharField(max_length=100, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,3 +15,13 @@ class Car(models.Model):
 
     def __str__(self):
         return f'{self.make} {self.model} {self.year}'
+
+
+class Comment(models.Model):
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f'{self.content[:20]}... {self.author} {self.created_at}'
