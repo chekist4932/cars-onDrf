@@ -1,8 +1,8 @@
 from django.contrib.auth.models import Group, User
-from rest_framework import permissions, viewsets, status
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import serializers
+from rest_framework.renderers import TemplateHTMLRenderer
 
 from .serializers import GroupSerializer, UserSerializer, CarSerializer, CommentSerializer
 from .models import Car, Comment
@@ -32,11 +32,6 @@ class CarViewSet(viewsets.ModelViewSet):
     serializer_class = CarSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
-    # def get_queryset(self):
-    #     pk = self.kwargs.get("pk")
-    #     return Comment.objects.filter(id=pk)
-
-    # @action(methods=['GET', 'POST'], detail=True, serializer_class=CommentSerializer,
     @action(methods=['GET'], detail=True, serializer_class=CommentSerializer,
             permission_classes=[CreateOrReadOnly])
     def comments(self, request, pk=None):
@@ -50,4 +45,4 @@ class CarViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return Response({'comments': serializer.data})
-        return Response({'error': 'serializer.errors'})
+        return Response({'detail': serializer.errors})
